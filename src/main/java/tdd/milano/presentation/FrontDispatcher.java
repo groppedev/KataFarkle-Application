@@ -20,6 +20,7 @@ public class FrontDispatcher extends HttpServlet
 	 */
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
+		response.getWriter().println("Hello World DICE GAME");
 	}
 
 }

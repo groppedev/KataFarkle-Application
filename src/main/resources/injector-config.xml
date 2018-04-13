@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+   <bean id="tdd.milano.diceGameService" class="tdd.milano.domain.DiceGameService" scope="singleton">
+     <description>Dice game service</description>
+     <constructor-arg index="0" >
+        <bean class="tdd.milano.infrastructure.DiceGamesInMemoryRepository" />
+     </constructor-arg>
+   </bean>
+   
+   <bean id="tdd.milano.app.servicebeanprovider" 
+     class="com.zucchetti.fui.appweb.listener.ServiceBeanProviderWithInjectorManager" scope="singleton" />
+   
+   <bean id="tdd.milano.app.pathResolverInitializer" class="tdd.milano.application.PathResolverInitializer" init-method="initPathResolver">
+   	  <constructor-arg index="0" value="#{T(tdd.milano.application.ApplicationStateExposer).getServletContext()}" />
+   </bean>
+   	<bean id="tdd.milano.app.pathResolver"  factory-bean="tdd.milano.app.pathResolverInitializer" factory-method="initPathResolver" scope="singleton">
+	    <description>Componente che risolve i paths per l'applicazione</description>
+	</bean>
+   <!-- Gestione scopes -->
+   
+   	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<description>Configurazione Injector per proprietà dell'applicazione</description>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath:appconf.properties</value>
+			</list>
+		</property>
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+	</bean>
+
+	<bean id="tdd.milano.tPooler" class="tdd.milano.pooler.ThreadPooler" scope="singleton" init-method="init" destroy-method="close">
+		<description>Thread pooler dell'applicazione</description>
+		<constructor-arg index="0" value="#{MIN_PRIORITY}" />
+		<constructor-arg index="1" value="${tdd.milano.poolMaxThread:5}" />
+		<constructor-arg index="2" value="true" />
+		<constructor-arg index="3" value="thread-ofpool" />
+	</bean>
+   
+</beans>
